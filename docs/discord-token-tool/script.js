@@ -640,7 +640,48 @@
         });
     });
     //--------------------------------------------------
-    
+        var avatarView = $("<img>", {
+            src: ""
+        }).hide().appendTo(area["アバター"]),
+        inputAvatar = $("<input>", {
+            type: "file"
+        }).insertBefore(avatarView).before("アバター画像: ").on("change", function() {
+            avatarView.hide().attr("src", "");
+            if (inputAvatar[0].files.length === 0) return;
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                avatarView.show().attr("src", e.target.result);
+            };
+            reader.readAsDataURL(inputAvatar[0].files[0]);
+        }).after("<br>");
+    addBtn(h, "アバターを反映").remove().insertAfter(inputAvatar).before("<br>").on("click", function() {
+        if (avatarView.attr("src").length === 0) return outputLog(g_output, "WARNING: アバター画像が選択されていません", g_ip_flag);
+        splitLine(inputToken.val()).forEach(function(v, i) {
+            g_ajaxTimeoutIds.push(setTimeout(function() {
+                disabledElement(content, true);
+                sendCancelBtn.prop("disabled", false);
+                $.ajax({
+                    type: "PATCH",
+                    url: "https://discord.com/api/v8/users/@me",
+                    headers: {
+                        authorization: v,
+                        "content-type": "application/json"
+                    },
+                    data: JSON.stringify({
+                        avatar: avatarView.attr("src")
+                    })
+                }).always(function(body, statusText, data) {
+                    outputLog(g_output, "AVATAR#" + (statusText === "error" ? body : data).status + "@" + v, g_ip_flag);
+                    g_ajaxTimeoutIds.shift(1);
+                    if (g_ajaxTimeoutIds.length === 0) {
+                        disabledElement(content, false);
+                        sendCancelBtn.prop("disabled", true);
+                    };
+                });
+            }, makeDelay(inputInterval.val(), i)));
+        });
+    });
+    //--------------------------------------------------
     h.append("<hr>");
     addDesc(h, [
         "開発者ツールが使用できない端末でも簡易的に通信の情報を見るためのものです。",
