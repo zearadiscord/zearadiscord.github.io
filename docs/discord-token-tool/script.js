@@ -207,10 +207,11 @@
     }).val("0.5");
     area["基本設定"].append("<br>" + makeSpan("Token", "darkgray", "black", 2.5));
     var inputToken = addTextarea(area["基本設定"], "Tokenを改行で区切って入力\n\n例: " + new Array(4).join("\n************************.******.***************************")).on("change", function() {
-        inputToken.val((inputToken.val().match(/[\w\-.]{59}/g) || []).filter(function(x, i, arr) {
+        inputToken.val((inputToken.val().match(/[\w\-.]{100}/g) || []).filter(function(x, i, arr) {  
             return arr.indexOf(x) === i;
         }).join("\n")).trigger("updatetextarea");
     });
+    //59
     addBtn(area["基本設定"], "コピー").remove().insertBefore(inputToken).on("click", function() {
         copy(inputToken.val());
         inputToken.select();
