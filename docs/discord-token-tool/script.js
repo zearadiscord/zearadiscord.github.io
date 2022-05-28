@@ -28,7 +28,7 @@
     };
 
     function initInterval(num) { // リクエスト送信間隔を初期化する
-        return (!isFinite(num) || isNaN(num) || num < 0.1) ? 0.5 : num;
+        return (!isFinite(num) || isNaN(num) || num < 0.00000000000000000000000000000000001) ? 0.1 : num;
     };
 
     function makeDelay(delay, i, o, len) { // 遅延を計算する
